@@ -1,25 +1,108 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState , useEffect } from "react";
+import TodoItem from "./component/TodoItem";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+  const [task, setTask] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState("all");
+
+  const addTask = () => {
+    if (task.trim() === "") return;
+
+    const newTodo = {
+      id: Date.now(),
+      text: task,
+      completed: false
+    };
+
+    setTodos([...todos, newTodo]);
+    setTask("");
+  };
+
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  const filteredTodos = todos.filter((todo) => {
+    if(filter === "active"){
+      return !todo.completed
+    }
+    if(filter === "completed"){
+      return todo.completed;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const savedTodos = localStorage.getItem("todos");
+    if(savedTodos){
+      setTodos(JSON.parse(savedTodos));
+    }
+  }, []);
+
+  useEffect(()=>{
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+// task Counter
+  const remainingTasks = todos.filter(todo => !todo.completed).length;
+  const clearCompleted = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+  }
+
+  const editTodo = (id, newText) => {
+    setTodos(
+      todos.map(todo => todo.id === id ? {...todo, text: newText } : todo)
+    );
+  };
+  return(
+    <div className="app-container">
+      <h1>Todo List</h1>
+      <div className="input-container">
+        <input
+          type="text"
+          value={task}
+          placeholder="Add a task..."
+          onChange={(e) => setTask(e.target.value)}
+        />
+
+         <button onClick={addTask}>Add</button>
+      </div>
+      <div className="task-footer">
+        <p className="task-counter">
+          {remainingTasks} task{remainingTasks !== 1 ? 's':''} left
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <button className="clear-btn" onClick={clearCompleted}>Clear Completed</button>
+      </div>
+
+      <div className="filters">
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("active")}>Active</button>
+        <button onClick={() => setFilter("completed")}>Completed</button>
+      </div>
+
+
+      <ul className="todo-list">
+        {filteredTodos.map(todo => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            toggleComplete={toggleComplete}
+            deleteTodo={deleteTodo}
+            editTodo={editTodo}
+          />
+        ))}
+      </ul>
     </div>
-  );
+    );
 }
 
 export default App;
