@@ -24,12 +24,16 @@ function TodoItem({ todo, toggleComplete, deleteTodo, editTodo }) {
           autoFocus
         />
       ) : (
+        <div className="togglecomplet">
+          <button className= {todo.completed ? "undo" : "complete"}  onClick={() => toggleComplete(todo.id)} >
+            {todo.completed ? "undo" : "DO"}
+          </button>
         <span
-          onClick={() => toggleComplete(todo.id)}
           className={todo.completed ? "completed" : ""}
         >
           {todo.text}
         </span>
+        </div>
       )}
 
       <div className="buttons">

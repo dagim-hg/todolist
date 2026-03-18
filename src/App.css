@@ -38,7 +38,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.add-button:hover {
   background: #45a049;
 }
 
@@ -140,4 +140,23 @@ button:hover {
 }
 .edit {
   background-color: #ff9900;
+}
+
+.delete-all {
+  background-color: rgb(249, 43, 43);
+}
+.delete-all:hover {
+  background-color: red;
+}
+
+.togglecomplet {
+  display:flex;
+  justify-content: center;
+  gap: 10px;
+}
+.undo {
+  background-color: gray;
+}
+.complete {
+  background-color: gold;
 }
